@@ -43,6 +43,28 @@ class BinaryTree:
                     return s
                 s = s.parent
             f = f.parent
+
+    def _fce(self, nodes, current):
+        retval = [False, False, None]
+        if current is not None:
+            left = self._fce(nodes, current.left)
+            right = self._fce(nodes, current.right)
+            
+            if left[0] and left[1]: # both nodes are contained in the left subtree
+                return left
+            elif right[0] and right[1]: # both nodes are contained in the right subtree
+                return right
+            if (left[0] or right[0]) and (left[1] or right[1]):
+                return [True, True, current]
+            retval[0] = retval[0] or (left[0] or right[0])
+            retval[1] = retval[1] or (left[1] or right[1])
+                
+            if current in nodes:
+                retval[nodes.index(current)] = True
+        return retval
+        
+    def first_common_ancestor(self, first, second):
+        return self._fce([first, second], self.root)[2]
     
 def test_run():
     bt = BinaryTree(10)
@@ -55,5 +77,12 @@ def test_run():
     bt.add_left(bt.root.right, 18)
     
     print bt.inorder()
-    node = bt.first_common_ancestor_using_parent(bt.root.left.right.left, bt.root.left.right.right)
+
+    #node = bt.first_common_ancestor_using_parent(bt.root.left.right.right, bt.root.left.left)
+    node = bt.first_common_ancestor_using_parent(bt.root.left.right.right, bt.root.right)
     print node
+
+    #node = bt.first_common_ancestor(bt.root.left.right.right, bt.root.left.left)
+    node = bt.first_common_ancestor(bt.root.left.right.right, bt.root.right)
+    print node
+    
