@@ -45,18 +45,16 @@ class Tree:
         return self._is_balanced(self.root, 0, Tree.CurrentMinMax())
 
     def is_balanced_nonrecursive(self):
-        queue = [self.root]
+        stack = [self.root]
         levels = [0]
-        node = self.root
-        visited = []
         current_min = sys.maxint
         current_max = 0
         current_level = 0
-        while len(queue) > 0:
-            n = queue.pop()
+        while len(stack) > 0:
+            n = stack.pop()
             current_level = levels.pop()
             for c in n.children:
-                queue.append(c)
+                stack.append(c)
                 levels.append(current_level + 1)
             if len(n.children) == 0:
                 if current_level < current_min:
