@@ -5,6 +5,8 @@ a balanced tree is defined to be a tree such that no two leaf nodes differ in di
 from the root by more than one.
 """
 
+import sys
+
 class Node:
     def __init__(self, item, children=None):
         self.item = item
@@ -41,7 +43,28 @@ class Tree:
             
     def is_balanced(self):
         return self._is_balanced(self.root, 0, Tree.CurrentMinMax())
-        
+
+    def is_balanced_nonrecursive(self):
+        queue = [self.root]
+        levels = [0]
+        node = self.root
+        visited = []
+        current_min = sys.maxint
+        current_max = 0
+        current_level = 0
+        while len(queue) > 0:
+            n = queue.pop()
+            current_level = levels.pop()
+            for c in n.children:
+                queue.append(c)
+                levels.append(current_level + 1)
+            if len(n.children) == 0:
+                if current_level < current_min:
+                    current_min = current_level
+                if current_level > current_max:
+                    current_max = current_level
+        return current_max - current_min < 2
+
 def inorder(node):
     if node is not None:
         print node.item
@@ -60,3 +83,4 @@ def test_run():
     
     print "is balanced"
     print tree.is_balanced()
+    print tree.is_balanced_nonrecursive()
