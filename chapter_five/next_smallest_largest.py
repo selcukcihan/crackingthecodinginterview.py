@@ -17,6 +17,9 @@ increment/decrement by 1, count bit number
 
 01110 => 01111, 10000, 10001, 10010, 10011
 
+11100
+10011
+
 1 1100
 
 11100
@@ -35,32 +38,37 @@ increment/decrement by 1, count bit number
 
 """
 
-def print_next_large(n):
+def print_base_2(value):
+    valstr = ""
+    while value > 0:
+        valstr = str(value % 2) + valstr
+        value = value // 2
+
+    print valstr
+
+def next_large(n):
     _n = n
-    one_detected = False
-    zero_after_ones_position = -1
-    position_begin = 0
-    position_end = 0
-    position = 0
-    # 01011 (decimal 11)
+    position_begin = 1
+    position_end = 1
+    position = 1
     while _n > 0:
         if _n & 0x1: # this is the first one bit
             position_begin = position
             position_end = position
-            # position_begin = 0
-            # position_end = 2
-            while _n > 0 and _n & 0x1: # 00101 (position = 1), 00010 (position = 2)
+            while _n > 0 and _n & 0x1:
                 position_end += 1
                 _n = _n >> 1
             break
         position += 1
         _n = _n >> 1
-        
-    if _n > 0:
-        m = n | (0x1 << position_end) # m: 01111
-        m = m & ((~(0x1 << position_begin)) & 0xFFFFFFFF)
-        # m = 01110
-        
-        _m = m
-        while _m > 0:
-            
+    if position_end > 0:
+        m = n | (0x1 << (position_end - 1))
+        m = m & (0xFFFFFFFF << (position_end - 1)) 
+        m = m | ((1 << (position_end - position_begin - 1)) - 1)
+        return m
+    return n
+
+def test_run():
+    print_base_2(next_large(0b0111))
+    print_base_2(next_large(0b01110))
+    print_base_2(next_large(0b01010))
