@@ -68,7 +68,60 @@ def next_large(n):
         return m
     return n
 
+"""
+01100 shift last one to right
+01010
+
+01111
+no solution
+
+1000
+0100
+
+1011, 1010, 1001, 1000, 0111
+0111
+
+101011
+100111
+
+en sagdan bitlere bak, ilk biri saga kaydir. saga kayamiyorsa devam et o grup birleri gec yine dene
+buldugun pozisyonu sifirla, bir kucuk pozisyonu birle
+
+"""
+
+def next_small(n):
+    zero_detected = False
+    _n = n
+    position = -1
+    current_position = 1
+    while _n > 0:
+        if _n & 0x1 > 0: # the bit is one
+            if zero_detected:
+                # do stuff
+                position = current_position
+                break
+
+            zero_detected = False
+        else: # the bit is zero
+            zero_detected = True
+
+        current_position += 1
+        _n = _n >> 1
+
+    if position == -1:
+        raise Exception("No next smallest for the given integer")
+
+    zeroing_mask = (~(1 << (position - 1))) & 0xFFFFFFFF
+    one_mask = 1 << (position - 2)
+    return (n & zeroing_mask) | one_mask
+
 def test_run():
-    print_base_2(next_large(0b0111))
-    print_base_2(next_large(0b01110))
-    print_base_2(next_large(0b01010))
+    #print_base_2(next_large(0b0111))
+    #print_base_2(next_large(0b01110))
+    #print_base_2(next_large(0b01010))
+    print_base_2(next_small(0b01010))
+    print_base_2(next_small(0b01100))
+    print_base_2(next_small(0b01000))
+    print_base_2(next_small(0b1011))
+    print_base_2(next_small(0b101011))
+
